@@ -1,0 +1,50 @@
+To start the project: 
+> npm start
+- replace YOUR_SB_CLIENT_ID in  /public/index.html (find it here https://developer.paypal.com/developer/applications)
+
+
+Stripe / Square / Paypal - checkout services that most people as a customer trust with their money.
+You can build this thing and put it into your e-commerce app. 
+
+> cd paypal-checkout/
+> npx create-react-app .
+
+Clean-up process.
+Google for 'paypal checkout api' -> https://developer.paypal.com/home -> log in -> 
+-> create app -> 
+    App name: checkout-live-training
+    App type: Merchant
+    Sandbox Business Account: leave default one     // you'll have the sandbox account here, you always want to go with sandbox because that way won't actually charge your cards.
+-> Payments API https://developer.paypal.com/docs/api/payments/v2/
+-> Standard payments with single page applications https://developer.paypal.com/docs/business/checkout/configure-payments/single-page-app/?mark=STANDARD%20PAYMENTS%20WITH%20#hashLinkContainer
+-> COPY Javascript SDK 
+    Go to /public/index.html -> add <script src="https://www.paypal.com/sdk/js?client-id=YOUR_SB_CLIENT_ID"></script> -> replace YOUR_SB_CLIENT_ID
+    // We are not importing any sort of party npm package because we get it done with the cdn.
+-> COPY React code from documentation.
+    import React from "react";
+    import ReactDOM from "react-dom"
+    const PayPalButton = paypal.Buttons.driver("react", { React, ReactDOM });
+
+    // the example is for a class based component but we need it to transform for a functional component:
+    
+    - insert:
+    <PayPalButton
+        createOrder={(data, actions) => this.createOrder(data, actions)}
+        onApprove={(data, actions) => this.onApprove(data, actions)}
+    />
+    
+    - remove 'this.'
+    - add onApprove, createOrder functions -> modify them to functional functions.
+
+-> Error: 'paypal' is not defined 
+    since we are using cdn (not installed packege) we need to add 'window.' before 'paypal'.
+
+Add <div className='wrapper'> -> add styles in App.css.
+Go to localhost -> click 'Paypal' -> 'Pay with Debit or Credit Card'.
+How to charge a person a certain amount? -> change amount in 'createOrder' function.
+Add console.log(data) to 'onApprove' function. -> Test the whole checkout with a fictional info.
+
+To dynamically set a price:
+    const [price, setPrice] = useState(0);
+    ...value: price,...
+    <input type='number' onChange={e => setPrice(e.target.value)} value={price}/>
